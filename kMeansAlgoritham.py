@@ -41,13 +41,25 @@ def has_converged(mu, oldmu):
 
 
 def find_centers(X, K):
+    N=5 # helps with points hovering between two clusters
 	# Initialize Data=X to K random centers
-    oldmu = random.sample(X, K)
-    mu = random.sample(X, K)
-    while not has_converged(mu, oldmu):
+    oldmu = random.sample(X, K*N)
+    mu = random.sample(X, K*N)
+    count = 0
+    while not has_converged(mu, oldmu) or count<3:
         oldmu = mu
         # Assign all points in X to clusters
         clusters = cluster_points(X, mu)
         # Reevaluate centers
         mu = reevaluate_centers(oldmu, clusters)
+        if count==3 or has_converged(mu, oldmu):#hack to avoid only centers in the same zone
+            muC = mu
+            mu=[]
+            for elem in muC:
+                if all((e[0]-elem[0])**2+(e[1]-elem[1])**2>30**2 for e in mu):
+                    mu.append(elem)
+            count=3
+            print mu
+            mu=random.sample(mu,K)
+        count=count+1
     return(mu, clusters)

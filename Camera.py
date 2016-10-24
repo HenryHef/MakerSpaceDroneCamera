@@ -11,18 +11,18 @@ class Camera:
     pixH=0
     max_angle_W=0
     max_angle_H=0
-    def __init__(self,pixW,pixH,max_angle_W,max_angle_H):
-        self.pixW=pixW
-        self.pixH=pixH
+    def __init__(self,max_angle_W,max_angle_H):
         self.max_angle_W=max_angle_W
         self.max_angle_H=max_angle_H
     def loadPositionFromImage(self,fileName):
-        data = findCameraLocation(fileName,self.pixW,self.pixH,self.max_angle_W,self.max_angle_H)
+        data = findCameraLocation(fileName,self.max_angle_W,self.max_angle_H)
         self.x=data[0]
         self.y=data[1]
         self.z=data[2]
         self.forwardVector=data[3]
         self.upVector=data[4]
+        self.pixW=data[5]
+        self.pixH=data[6]
     def mapPointToDirWorldFromCamera(x,y):
         w=np.tan(self.W_max_angle)
         h=np.tan(self.H_max_angle)
@@ -42,5 +42,6 @@ class Camera:
     def __str__(self):
         return '(x,y,z)=('+str(self.x)+","+str(self.y)+","+str(self.z)+")    forwardVector="+str(self.forwardVector)+"    upVector="+str(self.upVector)\
             +"    pixW="+str(self.pixW) +"    pixH="+str(self.pixH)+"    max_angle_W="+str(self.max_angle_W)+"    max_angle_H="+str(self.max_angle_H)
-
-print Camera(1000,1000,30,30).loadPositionFromImage("testBackup.jpg")  #field angles are 65 and 50
+cam = Camera(65/2.0,50/2.0)
+cam.loadPositionFromImage("test.jpg")   #field angles are 65 and 50
+print cam

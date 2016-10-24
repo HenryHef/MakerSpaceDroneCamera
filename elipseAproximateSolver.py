@@ -2,15 +2,31 @@ import numpy as np
 #from shapely.geometry.polygon import LinearRing
 
 #centered at 0,0
+def arccot(x):
+    if(x==0):return np.pi/2.0
+    return np.arctan(1/x)
+
 def ABCD_elipse_to_ThetaAB_elpise(A,B,C,D):
-    A=A/D
-    B=B/D
-    C=C/D
-    theta=np.arccot((A-C)/B)/2
+    A=A*1.0
+    B=B*1.0
+    C=C*1.0
+    D=D*1.0
+    print "(A,B,C,D)="+str((A,B,C,D))
+    A=A
+    print "(A,B,C,D)="+str((A,B,C,D))
+    B=B
+    C=C
+    print "(A,B,C,D)="+str((A,B,C,D))
+    theta=arccot((A-C)/B)/2
     M=np.cos(theta)**2
     N=np.sin(theta)**2
-    axisA=np.sqrt((M**2-N**2)/(A*M-C*N))
-    axisB=np.sqrt((M**2-N**2)/(C*M-A*N))
+    T=np.tan(theta)
+    T2=T**2
+    U=np.tan(theta+np.pi/2)
+    U2=U**2
+    print "(A,B,C,N,M,D,theta)="+str((A,B,C,N,M,D,theta))
+    axisA=np.sqrt((D*(1+T2))/(A+B*T+C*T2))
+    axisB=np.sqrt((D*(1+U2))/(A+B*U+C*U2))
     return (axisA,axisB,theta)
 
 def ellipse_polyline(elipse_with_a_b_angle, n=100):
@@ -22,14 +38,14 @@ def ellipse_polyline(elipse_with_a_b_angle, n=100):
     bx=-b*np.sin(angle)
     by=b*np.cos(angle)
 
-    return [(ax*np.cos(i/n*np.pi*2)+bx*np.sin(i/n*np.pi*2),ay*np.cos(i/n*np.pi*2)+by*np.sin(i/n*np.pi*2)) for i in range(n)]
+    return [(ax*np.cos(i*1.0/n*np.pi*2)+bx*np.sin(i*1.0/n*np.pi*2),ay*np.cos(i*1.0/n*np.pi*2)+by*np.sin(i*1.0/n*np.pi*2)) for i in range(n)]
 
 def intersections(a, b):
     intersections = []
     for i in range(len(a)):
         for j in range(len(b)):
-            if intersectsQ(a[i],a[(i+1)%len(a),b[j],b[(j+1)%len(b)]]):
-                intersections.append(intersectionPoint(a[i],a[(i+1)%len(a),b[j],b[(j+1)%len(b)]]))
+            if intersectsQ(a[i],a[(i+1)%len(a)],b[j],b[(j+1)%len(b)]):
+                intersections.append(intersectionPoint(a[i],a[(i+1)%len(a)],b[j],b[(j+1)%len(b)]))
     return intersections
 
 
@@ -69,10 +85,12 @@ def intersectionPoint(p1, p2, p3, p4):
 def getAO_BO_CO_fromAngleBOA_BOC_AC(angleBOA, angleBOC, AC):
     d=AC/2
     alpha=angleBOC
+    print "alpha = "+str(alpha)
     beta=angleBOA
     C_A=np.cos(alpha)
     C_B=np.cos(beta)
     C_AB=np.cos(alpha+beta)
+    print"(C_A,C_B,C_AB)="+str((C_A,C_B,C_AB))
     #we find using math that the intersection of 2 certen elipses is the solution to the problem
     elipse1 = ABCD_elipse_to_ThetaAB_elpise(1,-2*C_AB,1,4*(d**2))
     elipse2 = ABCD_elipse_to_ThetaAB_elpise(C_AB**2,2*C_AB-4*C_AB*(C_A**2),1,4*(d**2)*(C_A**2))
@@ -86,3 +104,8 @@ def getAO_BO_CO_fromAngleBOA_BOC_AC(angleBOA, angleBOC, AC):
             OB = np.sqrt((OA*OA+OC*OC-2*d*d)/2)
             goodPoints.append([OA,OB,OC])
     return goodPoints
+
+elipse1 = ABCD_elipse_to_ThetaAB_elpise(1,1,1,1)
+elipse2 = ABCD_elipse_to_ThetaAB_elpise(1,2,2,1)
+print ellipse_polyline(elipse1)
+print intersections(ellipse_polyline(elipse1),ellipse_polyline(elipse2))
