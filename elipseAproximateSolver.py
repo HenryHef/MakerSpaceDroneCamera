@@ -11,12 +11,9 @@ def ABCD_elipse_to_ThetaAB_elpise(A,B,C,D):
     B=B*1.0
     C=C*1.0
     D=D*1.0
-    print "(A,B,C,D)="+str((A,B,C,D))
     A=A
-    print "(A,B,C,D)="+str((A,B,C,D))
     B=B
     C=C
-    print "(A,B,C,D)="+str((A,B,C,D))
     theta=arccot((A-C)/B)/2
     M=np.cos(theta)**2
     N=np.sin(theta)**2
@@ -24,7 +21,6 @@ def ABCD_elipse_to_ThetaAB_elpise(A,B,C,D):
     T2=T**2
     U=np.tan(theta+np.pi/2)
     U2=U**2
-    print "(A,B,C,N,M,D,theta)="+str((A,B,C,N,M,D,theta))
     axisA=np.sqrt((D*(1+T2))/(A+B*T+C*T2))
     axisB=np.sqrt((D*(1+U2))/(A+B*U+C*U2))
     return (axisA,axisB,theta)
@@ -85,12 +81,10 @@ def intersectionPoint(p1, p2, p3, p4):
 def getAO_BO_CO_fromAngleBOA_BOC_AC(angleBOA, angleBOC, AC):
     d=AC/2
     alpha=angleBOC
-    print "alpha = "+str(alpha)
     beta=angleBOA
     C_A=np.cos(alpha)
     C_B=np.cos(beta)
     C_AB=np.cos(alpha+beta)
-    print"(C_A,C_B,C_AB)="+str((C_A,C_B,C_AB))
     #we find using math that the intersection of 2 certen elipses is the solution to the problem
     elipse1 = ABCD_elipse_to_ThetaAB_elpise(1,-2*C_AB,1,4*(d**2))
     elipse2 = ABCD_elipse_to_ThetaAB_elpise(C_AB**2,2*C_AB-4*C_AB*(C_A**2),1,4*(d**2)*(C_A**2))
@@ -101,11 +95,6 @@ def getAO_BO_CO_fromAngleBOA_BOC_AC(angleBOA, angleBOC, AC):
         if(point[0]>=0 and point[1]>=0):
             OA = point[0]
             OC = point[1]
-            OB = np.sqrt((OA*OA+OC*OC-2*d*d)/2)
+            OB = np.sqrt((2*OA*OA+2*OC*OC-AC*AC)/4)
             goodPoints.append([OA,OB,OC])
     return goodPoints
-
-elipse1 = ABCD_elipse_to_ThetaAB_elpise(1,1,1,1)
-elipse2 = ABCD_elipse_to_ThetaAB_elpise(1,2,2,1)
-print ellipse_polyline(elipse1)
-print intersections(ellipse_polyline(elipse1),ellipse_polyline(elipse2))
